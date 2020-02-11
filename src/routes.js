@@ -1,50 +1,20 @@
 import { Router } from "express";
+import ProjectsCtrl from "./app/controllers/ProjectsController";
 
 const routes = new Router();
 
-let sequence_id = 1;
-const projects = [
-  {
-  id:1,
-  title: "Primeiro Projeto",
-  tasks: ["Primeira Tarefa"]
-}]
+let contadorDeRequesicoes = 0;
 
-function getNextId(){
-  return ++sequence_id;
-}
-
-routes.post('/projects', (req, res) => {
-  res.json(projects);
+routes.use((req, res, next) => {
+  console.log("Requisição numero ", ++contadorDeRequesicoes);
+  next();
 });
 
-routes.get('/projects', (req, res) => {
-  res.json(projects);
-});
-
-routes.get('/projects/:id', (req, res) => {
-  let id = req.params.id
-  let project = projects.find(function(project){
-    return project.id == id;
-  });
-
-  if (project) {
-    return res.json(project);
-  }
-  
-  return res.json({erro: "Projeto não encontrado com id ".concat(id)});
-});
-
-routes.put('/projects/:id', (req, res) => {
-  res.json({ msg: "Agora vai" });
-});
-
-routes.delete('/projects/:id', (req, res) => {
-  res.json({ msg: "Agora vai" });
-});
-
-routes.post('/projects/:id/tasks', (req, res) => {
-  res.json({ msg: "Agora vai" });
-});
+routes.post('/projects', ProjectsCtrl.cadastrar);
+routes.get('/projects', ProjectsCtrl.listar);
+routes.get('/projects/:id', ProjectsCtrl.checkProjectsExists, ProjectsCtrl.buscarPorId);
+routes.put('/projects/:id', ProjectsCtrl.checkProjectsExists, ProjectsCtrl.editar);
+routes.delete('/projects/:id', ProjectsCtrl.checkProjectsExists, ProjectsCtrl.deletar);
+routes.post('/projects/:id/tasks', ProjectsCtrl.checkProjectsExists, ProjectsCtrl.adicionarTarefa);
 
 export default routes;

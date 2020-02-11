@@ -5,8 +5,8 @@ class App {
   constructor() {
     this.server = express();
 
-    this.carregarRoutes();
     this.middlewares();
+    this.carregarRoutes();
   }
 
   middlewares() {
